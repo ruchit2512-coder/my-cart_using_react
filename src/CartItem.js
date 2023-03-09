@@ -14,13 +14,28 @@ class CartItem extends React.Component{
     decrease=()=>{
         if(this.state.qty>0){
             console.log('decreases');
-            this.state.qty = this.state.qty-1;
+            this.setState((prevState)=>{
+                return {
+                    qty:prevState.qty-1
+                }    
+            })
         }
     }
 
     increase=()=>{
         console.log('increases');
-        this.state.qty = this.state.qty+1;
+        // method 1
+        // this.setState({
+        //     qty : this.state.qty+1
+        // })
+
+        // method 2
+        // this method is used when we need previous state values
+        this.setState((prevState)=>{
+            return {
+                qty:prevState.qty+1
+            }    
+        })
     }
 
     Delete=()=>{
