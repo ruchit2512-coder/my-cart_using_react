@@ -11,19 +11,19 @@ class CartItem extends React.Component{
         }
     }
 
-    decrease(){
+    decrease=()=>{
         if(this.state.qty>0){
             console.log('decreases');
             this.state.qty = this.state.qty-1;
         }
     }
 
-    increase(){
+    increase=()=>{
         console.log('increases');
         this.state.qty = this.state.qty+1;
     }
 
-    Delete(){
+    Delete=()=>{
         console.log('deleted');
     }
     render(){
@@ -37,11 +37,11 @@ class CartItem extends React.Component{
                 <div className='right-block'>
                     <div style={{fontSize:25}}>{title}</div>
                     <div style={{fontSize:20}}>Rs {price}</div>
-                    <div style={{fontSize:20,color:'#777'}}>Qty:{qty}</div>
-                    <div className='cart-item-actions'>
-                        <button id='increase' onClick={this.increase.bind(this)}><img alt='increase' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/9918/9918633.png'></img></button>
-                        <button id='decrease' onClick={this.decrease.bind(this)}><img alt='decrease' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/992/992683.png'></img></button>
-                        <button id='delete' onClick={this.Delete.bind(this)}><img alt='delete' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/3096/3096687.png'></img></button>    
+                    <div style={{color:'#777'}}>Qty:{qty}</div>
+                    <div className='cart-item-actions' style={{marginTop:7}}>
+                        <button id='increase' onClick={this.increase} style={{margin:2}}><img alt='increase' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/9918/9918633.png'></img></button>
+                        <button id='decrease' onClick={this.decrease} style={{margin:2}}><img alt='decrease' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/992/992683.png'></img></button>
+                        <button id='delete' onClick={this.Delete} style={{margin:2}}><img alt='delete' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/3096/3096687.png'></img></button>    
                     </div>
                 </div>
             </div>
