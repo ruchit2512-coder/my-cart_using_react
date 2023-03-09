@@ -1,9 +1,9 @@
-import './App.css';
+import CartItem from './CartItem';
 
 function App() {
   return (
     <div className="App">
-      my cart
+      <CartItem/>
     </div>
   );
 }
