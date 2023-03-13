@@ -1,15 +1,6 @@
 import React from 'react';
 
 class CartItem extends React.Component{
-    constructor(){
-        super()
-        this.state = {
-            price:999,
-            title:'Mobile phone',
-            qty:2,
-            img:''
-        }
-    }
 
     decrease=()=>{
         if(this.state.qty>0){
@@ -42,7 +33,8 @@ class CartItem extends React.Component{
         console.log('deleted');
     }
     render(){
-        let {price,title,qty} = this.state;  
+        let {price,title,qty,id} = this.props.product; 
+        const {product,increaseQuantity,decreaseQuantity,deleteItem} = this.props; 
 
         return(
             <div className='cart-item'>
@@ -54,9 +46,9 @@ class CartItem extends React.Component{
                     <div style={{fontSize:20}}>Rs {price}</div>
                     <div style={{color:'#777'}}>Qty:{qty}</div>
                     <div className='cart-item-actions' style={{marginTop:7}}>
-                        <button id='increase' onClick={this.increase} style={{margin:2}}><img alt='increase' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/9918/9918633.png'></img></button>
-                        <button id='decrease' onClick={this.decrease} style={{margin:2}}><img alt='decrease' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/992/992683.png'></img></button>
-                        <button id='delete' onClick={this.Delete} style={{margin:2}}><img alt='delete' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/3096/3096687.png'></img></button>    
+                        <button id='increase' onClick={()=>increaseQuantity(product)} style={{margin:2}}><img alt='increase' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/9918/9918633.png'></img></button>
+                        <button id='decrease' onClick={()=>decreaseQuantity(product)} style={{margin:2}}><img alt='decrease' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/992/992683.png'></img></button>
+                        <button id='delete' onClick={()=>deleteItem(id)} style={{margin:2}}><img alt='delete' className='action-icons' src='https://cdn-icons-png.flaticon.com/128/3096/3096687.png'></img></button>    
                     </div>
                 </div>
             </div>
