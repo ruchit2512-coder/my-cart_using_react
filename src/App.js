@@ -1,35 +1,64 @@
 import React from 'react';
 import Cart from './Cart';
 import Navbar from './Navbar';
+// import * as firebase from 'firebase'
+import { firestore } from "./firebase";
 
 class App extends React.Component {
   constructor(){
     super()
     this.state = {
-        products:[
-            {
-                price:999,
-                title:'Mobile phone',
-                qty:2,
-                imge:'https://media.istockphoto.com/id/1416168804/photo/blank-screen-smartphone-with-tilt-view-isolated-on-white-background-with-clipping-path.jpg?b=1&s=170667a&w=0&k=20&c=T6oDByj-BrAzyVPRz7eRmnn7uaijKRH9Sdek_N8BWUY=',
-                id:1
-            },
-            {
-                price:2224,
-                title:'laptop',
-                qty:1,
-                imge:'https://media.istockphoto.com/id/1389603578/photo/laptop-blank-screen-on-wood-table-with-blurred-coffee-shop-cafe-interior-background-and.jpg?b=1&s=170667a&w=0&k=20&c=fPqy8pPGL4IQa2LvQQ2tX9qUPmIhPfmqu-xEVMEC1vY=',
-                id:2
-            },
-            {
-                price:50,
-                title:'Mobile charger',
-                qty:10,
-                imge:'https://media.istockphoto.com/id/1150019554/photo/smartphone-charger-cable.jpg?b=1&s=170667a&w=0&k=20&c=mp1U5r3A58KHbrwcdhIExBz7t-uN9ImXL3h3cdpTrts=',
-                id:3
-            }
-        ]
+        products:[],
+        loading:true
     }
+  }
+
+  componentDidMount(){
+    // firestore
+    // .collection('products')
+    // .get()
+    // .then((snapshot)=>{
+    //   console.log(snapshot);
+    //   snapshot.docs.map((doc)=>{
+    //     console.log(doc.data());
+    //   })
+
+    //   const products = snapshot.docs.map((doc)=>{
+    //     const data = doc.data();
+    //     data['id'] = doc.id;
+    //     return data;
+    //   })
+
+    //   this.setState({
+    //     products:products,
+    //     loading:false
+    //   })
+    // })
+
+
+    firestore
+    .collection('products')
+    // we can filter the items using where clause
+    .where('title','==','laptop')
+    // this onSnapshot is fired whenever any changes is happened in database so do not have to
+    // reload the page again
+    .onSnapshot((snapshot)=>{
+      console.log(snapshot);
+      snapshot.docs.map((doc)=>{
+        console.log(doc.data());
+      })
+
+      const products = snapshot.docs.map((doc)=>{
+        const data = doc.data();
+        data['id'] = doc.id;
+        return data;
+      })
+
+      this.setState({
+        products:products,
+        loading:false
+      })
+    })
   }
 
   handleIncreaseQuantity=(product)=>{
@@ -37,40 +66,79 @@ class App extends React.Component {
       const {products} = this.state;
       const index = products.indexOf(product);
 
-      products[index].qty=products[index].qty+1;
+      // products[index].qty=products[index].qty+1;
 
-      this.setState({
-          products:products
+      // this.setState({
+      //     products:products
+      // })
+
+      // here we updating the qty in database but whenever any changes is happen in db
+      // onSnapshot is called and it re-render the DOM
+      const docRef = firestore.collection('products').doc(products[index].id);
+      docRef
+      .update({
+        qty:products[index].qty+=1
+      })
+      .then(()=>{
+        console.log('qty is updated',docRef)
+      })
+      .catch((error)=>{
+        console.log(error);
       })
   }
 
   handleDecreaseQuantity=(product)=>{
-      console.log('increase the qunatity');
-      const {products} = this.state;
-      const index = products.indexOf(product);
+    console.log('increase the qunatity');
+    const {products} = this.state;
+    const index = products.indexOf(product);
 
-      if(products[index].qty===0){
-          return;
-      }
+    if(products[index].qty===0){
+        return;
+    }
 
-      products[index].qty=products[index].qty-1;
+    // products[index].qty=products[index].qty-1;
 
-      this.setState({
-          products:products
+    // this.setState({
+    //     products:products
+    // })
+
+    const docRef = firestore.collection('products').doc(products[index].id);
+      docRef
+      .update({
+        qty:products[index].qty-=1
       })
+      .then(()=>{
+        console.log('qty is updated',docRef)
+      })
+      .catch((error)=>{
+        console.log(error);
+      })
+
   }
 
   handleDeleteItem = (id)=>{
-      const {products} = this.state;
-      let items = products.filter((item)=>{
-          return(
-              item.id!==id
-          )
-      })
+    const {products} = this.state;
+    // let items = products.filter((item)=>{
+    //     return(
+    //         item.id!==id
+    //     )
+    // })
 
-      this.setState({
-          products:items
-      })
+    // this.setState({
+    //     products:items
+    // })
+
+    // here we are deleting the product from database using docRef
+
+    const docRef = firestore.collection('products').doc(id);
+    docRef
+    .delete()
+    .then(()=>{
+      console.log('item is deleted');
+    })
+    .catch((err)=>{
+      console.log(err);
+    })
   }
 
   totalproducts=()=>{
@@ -96,12 +164,30 @@ class App extends React.Component {
     return cartTotal;
   }
 
+  addProduct = ()=>{
+    firestore
+    .collection('products')
+    .add({
+      price:250,
+      title:'bluetooth',
+      qty:10,
+      imge:''
+    })
+    .then((docRef)=>{
+      console.log('product is added',docRef);
+    })
+    .catch((error)=>{
+      console.log(error);
+    })
+  }
+
 
   render(){
-    const {products} = this.state;
+    const {products,loading} = this.state;
     return (
       <div className="App">
         <Navbar count={this.totalproducts()}/>
+        <button onClick={this.addProduct} style={{padding:20, fontSize:20}}>Add Product</button>
         <
           Cart
           products={products}
@@ -109,6 +195,7 @@ class App extends React.Component {
           decreaseQuantity = {this.handleDecreaseQuantity}
           deleteItem={this.handleDeleteItem}
         />
+        {loading&&<h1>Loading Product</h1>}
         <div style={ {padding: 10, fontSize: 20} }>TOTAL: {this.getCartTotal()} </div>
       </div>
     );
